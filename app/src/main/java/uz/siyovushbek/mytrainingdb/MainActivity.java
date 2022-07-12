@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
+import uz.siyovushbek.mytrainingdb.exercise.ExercisesListActivity;
+import uz.siyovushbek.mytrainingdb.record.ExerciseRecordsActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button exercisesButton, exerciseRecordsButton;
@@ -18,11 +21,13 @@ public class MainActivity extends AppCompatActivity {
 
         setOnClickListeners();
 
+        DatabaseUtil.populateWithTestData();
+
     }
 
     private void setOnClickListeners() {
         exercisesButton.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, ExercisesActivity.class);
+            Intent intent = new Intent(MainActivity.this, ExercisesListActivity.class);
             startActivity(intent);
         });
 
