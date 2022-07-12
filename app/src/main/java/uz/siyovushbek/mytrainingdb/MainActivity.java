@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import uz.siyovushbek.mytrainingdb.exercise.ExercisesListActivity;
-import uz.siyovushbek.mytrainingdb.record.ExerciseRecordsActivity;
+import uz.siyovushbek.mytrainingdb.record.RecordsListActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         exerciseRecordsButton.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, ExerciseRecordsActivity.class);
+            Intent intent = new Intent(MainActivity.this, RecordsListActivity.class);
             startActivity(intent);
         });
 

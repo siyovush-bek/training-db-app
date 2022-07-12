@@ -17,7 +17,7 @@
             android:name=".exercise.ExerciseActivity"
             android:exported="false" />
         <activity
-            android:name=".record.ExerciseRecordsActivity"
+            android:name=".record.RecordsListActivity"
             android:exported="false" />
         <activity
             android:name=".exercise.ExercisesListActivity"
