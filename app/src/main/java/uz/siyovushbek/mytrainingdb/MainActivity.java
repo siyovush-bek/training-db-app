@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
 
         setOnClickListeners();
 
-        DatabaseUtil.populateWithTestData();
 
     }
 

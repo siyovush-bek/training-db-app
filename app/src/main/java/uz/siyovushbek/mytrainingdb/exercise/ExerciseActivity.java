@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import uz.siyovushbek.mytrainingdb.DatabaseUtil;
+import uz.siyovushbek.mytrainingdb.database.DatabaseHelper;
 import uz.siyovushbek.mytrainingdb.R;
 
 public class ExerciseActivity extends AppCompatActivity {
@@ -32,7 +32,7 @@ public class ExerciseActivity extends AppCompatActivity {
     private TextView exerciseName, exerciseDescription;
     private ImageView exercisePhoto;
     private Button changePhotoButton;
-
+    private DatabaseHelper dbHelper;
     private Exercise exercise;
 
     private final static int PICK_IMAGE = 0;
@@ -42,14 +42,15 @@ public class ExerciseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
         Intent intent = getIntent();
-        int position = intent.getIntExtra("EXERCISE_ID", 0);
+        int id = intent.getIntExtra("EXERCISE_ID", 0);
 
         exerciseDescription = findViewById(R.id.individual_exercise_desc);
         exerciseName = findViewById(R.id.individual_exercise_name);
         exercisePhoto = findViewById(R.id.individual_exercise_image);
         changePhotoButton = findViewById(R.id.individual_exercise_image_change_button);
 
-        exercise = DatabaseUtil.getInstance().getExerciseById(position);
+        dbHelper = new DatabaseHelper(this);
+        exercise = dbHelper.getExerciseById(id);
 
         exerciseName.setText(exercise.getName());
         exerciseDescription.setText(exercise.getDescription());
@@ -71,7 +72,7 @@ public class ExerciseActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent i = new Intent(this, ExercisesListActivity.class);
-//        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
     }
 
@@ -85,7 +86,9 @@ public class ExerciseActivity extends AppCompatActivity {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
                 String image = saveToInternalStorage(bitmap);
                 Glide.with(this).load(image).into(exercisePhoto);
+                deletePreviousIcon(exercise.getFileName());
                 exercise.setFileName(image);
+                dbHelper.changeExercisePhoto(exercise);
             } catch (IOException e) {
                 Toast.makeText(this, "Error while loading image", Toast.LENGTH_LONG);
             }
@@ -99,7 +102,7 @@ public class ExerciseActivity extends AppCompatActivity {
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         // Create imageDir
         String imageName = generateImageName();
-        File mypath=new File(directory,imageName);
+        File mypath = new File(directory,imageName);
 
         FileOutputStream fos = null;
         try {
@@ -128,4 +131,16 @@ public class ExerciseActivity extends AppCompatActivity {
         startActivityForResult(i, PICK_IMAGE);
     }
 
+    private void deletePreviousIcon(String fileName) {
+        if(!"".equals(fileName)) {
+            File f = new File(fileName);
+            boolean b = f.delete();
+            if (b) {
+                Toast.makeText(this, "Previous image successfully deleted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Previous image not deleted :((", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    }
 }

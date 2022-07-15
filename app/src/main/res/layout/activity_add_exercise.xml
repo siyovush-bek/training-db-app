@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".exercise.AddExerciseActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click image to change" />
+
+            <ImageView
+                android:id="@+id/exercise_add_image"
+                android:layout_width="180dp"
+                android:layout_height="225dp"
+                android:contentDescription="Click image to change"
+                android:src="@drawable/default_exercise_icon" />
+
+            <EditText
+                android:id="@+id/edit_text_exercise_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:ems="10"
+                android:hint="Name of exercise"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/edit_text_exercise_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edit_text_exercise_name"
+                android:layout_margin="20dp"
+                android:ems="10"
+                android:gravity="start|top"
+                android:hint="Give some description"
+                android:inputType="textMultiLine" />
+
+            <Button
+                android:id="@+id/exercise_add_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edit_text_exercise_desc"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"
+                android:text="Add" />
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

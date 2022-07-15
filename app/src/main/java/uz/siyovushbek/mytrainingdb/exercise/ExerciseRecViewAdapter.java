@@ -39,6 +39,7 @@ public class ExerciseRecViewAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        int p = holder.getAdapterPosition();
         holder.exerciseName.setText(exercises.get(position).getName());
         holder.exerciseDescription.setText(exercises.get(position).getDescription());
         String imagePath = exercises.get(position).getFileName();
@@ -51,7 +52,8 @@ public class ExerciseRecViewAdapter
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ExerciseActivity.class);
-                intent.putExtra("EXERCISE_ID", position);
+                int id = exercises.get(p).getId();
+                intent.putExtra("EXERCISE_ID", id);
                 context.startActivity(intent);
             }
         });
