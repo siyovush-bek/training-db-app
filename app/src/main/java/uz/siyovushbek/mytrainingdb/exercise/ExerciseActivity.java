@@ -26,6 +26,7 @@ import java.util.Date;
 
 import uz.siyovushbek.mytrainingdb.database.DatabaseHelper;
 import uz.siyovushbek.mytrainingdb.R;
+import uz.siyovushbek.mytrainingdb.utils.FilesUtil;
 
 public class ExerciseActivity extends AppCompatActivity {
 
@@ -44,14 +45,17 @@ public class ExerciseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int id = intent.getIntExtra("EXERCISE_ID", 0);
 
-        exerciseDescription = findViewById(R.id.individual_exercise_desc);
-        exerciseName = findViewById(R.id.individual_exercise_name);
-        exercisePhoto = findViewById(R.id.individual_exercise_image);
-        changePhotoButton = findViewById(R.id.individual_exercise_image_change_button);
+        initViews();
 
         dbHelper = new DatabaseHelper(this);
         exercise = dbHelper.getExerciseById(id);
 
+        populateUIWithData(exercise);
+
+        changePhotoButton.setOnClickListener(view -> FilesUtil.loadImage(this));
+    }
+
+    private void populateUIWithData(Exercise exercise) {
         exerciseName.setText(exercise.getName());
         exerciseDescription.setText(exercise.getDescription());
         String imagePath = exercise.getFileName();
@@ -60,13 +64,13 @@ public class ExerciseActivity extends AppCompatActivity {
         } else {
             Glide.with(this).load(imagePath).into(exercisePhoto);
         }
+    }
 
-        changePhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadImage();
-            }
-        });
+    private void initViews() {
+        exerciseDescription = findViewById(R.id.individual_exercise_desc);
+        exerciseName = findViewById(R.id.individual_exercise_name);
+        exercisePhoto = findViewById(R.id.individual_exercise_image);
+        changePhotoButton = findViewById(R.id.individual_exercise_image_change_button);
     }
 
     @Override
@@ -79,14 +83,13 @@ public class ExerciseActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+        if (requestCode == FilesUtil.PICK_IMAGE && resultCode == RESULT_OK) {
             Uri uri = data.getData();
-//            String filePath = saveImageToInternalStorage(uri);
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                String image = saveToInternalStorage(bitmap);
+                String image = FilesUtil.saveToInternalStorage(this, bitmap);
                 Glide.with(this).load(image).into(exercisePhoto);
-                deletePreviousIcon(exercise.getFileName());
+                FilesUtil.deletePreviousIcon(this, exercise.getFileName());
                 exercise.setFileName(image);
                 dbHelper.changeExercisePhoto(exercise);
             } catch (IOException e) {
@@ -96,51 +99,4 @@ public class ExerciseActivity extends AppCompatActivity {
         }
     }
 
-    private String saveToInternalStorage(Bitmap bitmapImage){
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        // Create imageDir
-        String imageName = generateImageName();
-        File mypath = new File(directory,imageName);
-
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return directory.getAbsolutePath() + "/" + imageName;
-    }
-
-    private String generateImageName() {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        return "JPEG_" + timeStamp + "_.jpg" ;
-    }
-
-    private void loadImage() {
-        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(i, PICK_IMAGE);
-    }
-
-    private void deletePreviousIcon(String fileName) {
-        if(!"".equals(fileName)) {
-            File f = new File(fileName);
-            boolean b = f.delete();
-            if (b) {
-                Toast.makeText(this, "Previous image successfully deleted", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Previous image not deleted :((", Toast.LENGTH_SHORT).show();
-
-            }
-        }
-    }
 }

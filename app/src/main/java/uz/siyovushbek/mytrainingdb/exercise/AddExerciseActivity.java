@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import uz.siyovushbek.mytrainingdb.R;
 import uz.siyovushbek.mytrainingdb.database.DatabaseHelper;
@@ -28,32 +29,32 @@ public class AddExerciseActivity extends AppCompatActivity {
         initViews();
         setOnClickListeners();
 
-
-
     }
 
     private void setOnClickListeners() {
+        addButton.setOnClickListener(view -> {
+            if(dataIsValid()) {
+                String name = exerciseName.getText().toString();
+                String description = exerciseDesc.getText().toString();
+                Exercise exercise = new Exercise(name, description, "");
+                boolean b = dbHelper.addOne(exercise);
 
-
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(dataIsValid()) {
-                    String name = exerciseName.getText().toString();
-                    String description = exerciseDesc.getText().toString();
-                    Exercise exercise = new Exercise(name, description, "");
-                    boolean b = dbHelper.addOne(exercise);
-                    if(b) {
-                        Intent i = new Intent(AddExerciseActivity.this, ExercisesListActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        AddExerciseActivity.this.startActivity(i);
-                    }
+                if(b) {
+                    Intent i = new Intent(this, ExercisesListActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    AddExerciseActivity.this.startActivity(i);
+                } else {
+                    Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
     private boolean dataIsValid() {
+        if(exerciseName.getText().toString().isEmpty() ||
+            exerciseDesc.getText().toString().isEmpty()) {
+            return false;
+        }
         return true;
     }
 
@@ -63,6 +64,5 @@ public class AddExerciseActivity extends AppCompatActivity {
         addButton = findViewById(R.id.exercise_add_button);
         image = findViewById(R.id.exercise_add_image);
     }
-
 
 }
